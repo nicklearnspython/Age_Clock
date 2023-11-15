@@ -36,14 +36,14 @@ static const int daysMax = 30;
 static const int monthsMin = 0;
 static const int monthsMax = 11;
 static const int yearsMin = 0;
-static const int yearsMax = 18;
+static const int yearsMax = 17;
 
-static const int dayServoAngleMin = 20;
-static const int dayServoAngleMax = 160;
-static const int monthServoAngleMin = 20;
-static const int monthServoAngleMax = 160;
-static const int yearServoAngleMin = 20;
-static const int yearServoAngleMax = 160;
+static const int dayServoAngleMin = 0;
+static const int dayServoAngleMax = 180;
+static const int monthServoAngleMin = 0;
+static const int monthServoAngleMax = 180;
+static const int yearServoAngleMin = 0;
+static const int yearServoAngleMax = 180;
 
 // Offset hours from gps time (UTC)
 static const int CST_offset = -6;  // Central Standard Time (USA)
