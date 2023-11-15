@@ -1,6 +1,6 @@
 /*
- * Rui Santos 
- * Complete Project Details https://randomnerdtutorials.com
+ * Nick Garrett
+ * The Age Clock
  */
 
 #include <TimeLib.h>
@@ -167,35 +167,35 @@ void loop(){
 
   switch (input) {
     
-    case 1:
+    case 1: 
+      testAgeCalculater();
+      break;
+    
+    case 2:
       listenForGPSMessages();
       break;
-      
-    case 2: 
+    
+    case 3:
+      listenForGPSMessages();
+      calculateAge(day(), month(), year());
+      break;
+    
+    case 4:
+      dayServo.center();
+      monthServo.center();
+      yearServo.center();
+      break;
+
+    case 5: 
       dayServo.testServo();
       monthServo.testServo();
       yearServo.testServo();
       break;
 
-    case 3:
+    case 6:
       //moveDayServo();
       //moveMonthServo();
       //moveYearServo();
-      break;
-
-    case 4: 
-      testAgeCalculater();
-      break;
-
-    case 5:
-      listenForGPSMessages();
-      calculateAge(day(), month(), year());
-      break;
-
-    case 6:
-      dayServo.center();
-      monthServo.center();
-      yearServo.center();
       break;
 
     case 7:
@@ -392,14 +392,13 @@ void printDigits(int digits) {
 void printMenu() {
   Serial.println();
   Serial.println("******* Menu *******");
-  Serial.println("1. Print GPS Time data.");
-  Serial.println("2. Test all servos.");
-  Serial.println("3. Nothing...");
-  Serial.println("4. Test Age Calculator.");
-  Serial.println("5. Use GPS to calculate Age.");
-  Serial.println("6. Center all Servos.");
+  Serial.println("1. Test Age Calculator.");
+  Serial.println("2. Print GPS Time data.");
+  Serial.println("3. Use GPS to calculate Age.");
+  Serial.println("4. Center all Servos.");
+  Serial.println("5. Test range on each servo.");
+  Serial.println("6. Nothing...");
   Serial.println("7. Run Age Clock");
-  
 }
 
 
