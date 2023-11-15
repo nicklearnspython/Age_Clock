@@ -257,24 +257,20 @@ void updateClock(){
 }
 
 
-void updateAge(){
-  calculateAge(day(), month(), year());
-}
-
-
 void testAgeCalculater(){
   while(true){
-    Serial.print("Enter Test Year: "); 
+    Serial.print("Outputs Age from Birth to Input Date.");
+    Serial.print("Enter a Year: "); 
     while (Serial.available() == 0) {}
     int testYear = Serial.parseInt();
     Serial.println(testYear);
 
-    Serial.print("Enter Test Month: "); 
+    Serial.print("Enter a Month: "); 
     while (Serial.available() == 0) {}
     int testMonth = Serial.parseInt();
     Serial.println(testMonth);
     
-    Serial.print("Enter Test Day: "); 
+    Serial.print("Enter a Day: "); 
     while (Serial.available() == 0) {}
     int testDay = Serial.parseInt();
     Serial.println(testDay);
