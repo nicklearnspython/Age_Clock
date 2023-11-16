@@ -27,6 +27,10 @@ static const int birthYear = 2016;
 //static const int birthMonth = 6;
 //static const int birthYear = 2021;
 
+static const String dayServoTitle = "Day";
+static const String monthServoTitle = "Month";
+static const String yearServoTitle = "Year";
+
 static const int dayServoPin = 11;
 static const int monthServoPin = 10;
 static const int yearServoPin = 9;
@@ -55,6 +59,7 @@ static const int PDT_offset = -7;  // Pacific Daylight Time (USA)
 class ClockServo {
 private:
   Servo clockServo;     // Servo instance
+  String title;
   int pin;              
   int angleMin;         
   int angleMax;         
@@ -63,8 +68,8 @@ private:
   int pos;
 
 public:
-  ClockServo(int servoPin, int minAngle, int maxAngle, int minAge, int maxAge)
-    : pin(servoPin), angleMin(minAngle), angleMax(maxAngle), ageMin(minAge), ageMax(maxAge) {}
+  ClockServo(String servoTitle, int servoPin, int minAngle, int maxAngle, int minAge, int maxAge)
+    : title(servoTitle), pin(servoPin), angleMin(minAngle), angleMax(maxAngle), ageMin(minAge), ageMax(maxAge) {}
 
   
   void servoAttach() {
@@ -78,6 +83,8 @@ public:
   
 
   void setAngle(int angle) {
+    Serial.print(title);
+    Serial.print(".setAngle() - ");
     if (angle >= angleMin && angle <= angleMax) {
       Serial.print("Setting angle: ");
       Serial.println(angle);
@@ -132,9 +139,9 @@ public:
 };
 
 
-ClockServo dayServo(dayServoPin, dayServoAngleMin, dayServoAngleMax, daysMin, daysMax);
-ClockServo monthServo(monthServoPin, monthServoAngleMin, monthServoAngleMax, monthsMin, monthsMax);
-ClockServo yearServo(yearServoPin, yearServoAngleMin, yearServoAngleMax, yearsMin, yearsMax); 
+ClockServo dayServo(dayServoTitle, dayServoPin, dayServoAngleMin, dayServoAngleMax, daysMin, daysMax);
+ClockServo monthServo(monthServoTitle, monthServoPin, monthServoAngleMin, monthServoAngleMax, monthsMin, monthsMax);
+ClockServo yearServo(yearServoTitle, yearServoPin, yearServoAngleMin, yearServoAngleMax, yearsMin, yearsMax); 
 
 TinyGPSPlus gps; 
 SoftwareSerial ss(RXPin, TXPin);                    // The serial connection to the GPS device
@@ -316,7 +323,7 @@ void calculateAge(int inputDay, int inputMonth, int inputYear){
     Serial.println("Error: monthDiff not a number?");
   }
 
-  int ageYear = inputYear - birthYear - yearModifier;
+  ageYear = inputYear - birthYear - yearModifier;
 
   Serial.print("Birthday: ");
   Serial.print(birthMonth);
