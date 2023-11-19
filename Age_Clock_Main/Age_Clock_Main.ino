@@ -8,6 +8,8 @@
 #include <SoftwareSerial.h>
 #include <Servo.h>
 
+bool isAutoplayEnabled = false;
+
 static const int RXPin = 4, TXPin = 3;
 static const int dummy_RXPin = 13, dummy_TXPin = 12;
 static const uint32_t GPSBaud = 9600;
@@ -166,8 +168,14 @@ void setup(){
 
 void loop(){
   printMenu();
-  while (Serial.available() == 0) {}
-  input = Serial.parseInt();
+
+  if (isAutoplayEnabled){
+    input  = 7;
+  }
+  else {
+    while (Serial.available() == 0) {}
+    input = Serial.parseInt();
+  }
   
   Serial.print("You inputed the value: ");
   Serial.println(input);
