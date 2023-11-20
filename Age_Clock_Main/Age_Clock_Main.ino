@@ -51,6 +51,10 @@ static const int monthServoAngleMax = 180;
 static const int yearServoAngleMin = 0;
 static const int yearServoAngleMax = 180;
 
+static const int dayAngles[] = {};
+static const int monthAngles[] = {};
+static const int yearAngles[] = {};
+
 // Offset hours from gps time (UTC)
 static const int CST_offset = -6;  // Central Standard Time (USA)
 static const int CDT_offset = -5;  // Central Daylight Time (USA)
@@ -68,7 +72,9 @@ private:
   int ageMin;
   int ageMax;
   int pos;
-
+  int cal_input;
+  int positions[31];
+  
 public:
   ClockServo(String servoTitle, int servoPin, int minAngle, int maxAngle, int minAge, int maxAge)
     : title(servoTitle), pin(servoPin), angleMin(minAngle), angleMax(maxAngle), ageMin(minAge), ageMax(maxAge) {}
@@ -123,7 +129,13 @@ public:
     servoDetach();
   }
 
-  void testServo(){
+  void zero(){
+    servoAttach();
+    setAngle(0);
+    servoDetach();
+  }
+
+  void sweep(){
     servoAttach();
     int newAge = ageMin;
     
@@ -137,6 +149,43 @@ public:
     center();
     delay(1000);
     servoDetach();
+  }
+
+  void userSetAngle(){
+    while(true){
+      while (Serial.available() == 0) {}
+      cal_input = Serial.parseInt();
+      
+      servoAttach();
+      setAngle(cal_input);
+      servoDetach();
+    }
+  }
+
+  void angleCalibration(){
+    Serial.println("Calibrate ");
+    Serial.print(title);
+    Serial.println(" age to servo angle.");
+    int index = 0;
+    
+    while(true){
+      Serial.print("Age: ");
+      Serial.print(index);
+      Serial.print(", Servo angle: ");
+      
+      while (Serial.available() == 0) {}
+      cal_input = Serial.parseInt();
+
+      Serial.println(cal_input);
+
+      if(cal_input != -1){
+        Serial.println("Calibration complete.");
+        break;
+      }
+      
+      positions[index] = cal_input;
+      index++;
+    }
   }
 };
 
@@ -196,24 +245,34 @@ void loop(){
       break;
     
     case 4:
+      dayServo.zero();
+      monthServo.zero();
+      yearServo.zero();
+      break;
+    
+    case 5:
       dayServo.center();
       monthServo.center();
       yearServo.center();
       break;
 
-    case 5: 
-      dayServo.testServo();
-      monthServo.testServo();
-      yearServo.testServo();
+    case 6: 
+      dayServo.sweep();
+      monthServo.sweep();
+      yearServo.sweep();
       break;
 
-    case 6:
-      //moveDayServo();
-      //moveMonthServo();
-      //moveYearServo();
+    case 7: 
+      monthServo.userSetAngle();
       break;
 
-    case 7:
+    case 8:
+      dayServo.angleCalibration();
+      monthServo.angleCalibration();
+      yearServo.angleCalibration();
+      break;
+
+    case 9:
       runAgeClock();
       break;
 
@@ -406,10 +465,12 @@ void printMenu() {
   Serial.println("1. Test Age Calculator.");
   Serial.println("2. Print GPS Time data.");
   Serial.println("3. Use GPS to calculate Age.");
-  Serial.println("4. Center all Servos.");
-  Serial.println("5. Test range on each servo.");
-  Serial.println("6. Nothing...");
-  Serial.println("7. Run Age Clock");
+  Serial.println("4. Zero all Servos.");
+  Serial.println("5. Center all Servos.");
+  Serial.println("6. Sweep all Servos.");
+  Serial.println("7. User Set Servo Position.");
+  Serial.println("8. Calibrate Servos");
+  Serial.println("9. Run Age Clock");
 }
 
 
