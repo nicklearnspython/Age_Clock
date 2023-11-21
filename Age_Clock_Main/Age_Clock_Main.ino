@@ -10,8 +10,8 @@
 
 bool isAutoplayEnabled = false;
 
-static const int RXPin = 4, TXPin = 3;
-static const int dummy_RXPin = 13, dummy_TXPin = 12;
+static const uint8_t RXPin = 4, TXPin = 3;
+static const uint8_t dummy_RXPin = 13, dummy_TXPin = 12;
 static const uint32_t GPSBaud = 9600;
 
 //C
@@ -51,9 +51,9 @@ static const int monthServoAngleMax = 180;
 static const int yearServoAngleMin = 0;
 static const int yearServoAngleMax = 180;
 
-static const int dayAngles[] = {};
-static const int monthAngles[] = {};
-static const int yearAngles[] = {};
+static const uint8_t dayAngles[] = {0, 7, 12, 18, 23, 29, 35, 40, 45, 51, 56, 62, 66, 72, 77, 83, 89, 95, 101, 106, 112, 119, 126, 132, 138, 145, 151, 159, 167, 173, 180};
+static const uint8_t monthAngles[] = {0, 15, 30, 44, 58, 72, 85, 100, 117, 133, 150, 170};
+static const uint8_t yearAngles[] = {0, 8, 18, 27, 37, 47, 57, 68, 80, 92, 104, 117, 130, 141, 154, 166, 179};
 
 // Offset hours from gps time (UTC)
 static const int CST_offset = -6;  // Central Standard Time (USA)
@@ -73,11 +73,21 @@ private:
   int ageMax;
   int pos;
   int cal_input;
-  int positions[31];
+  uint8_t positions[32];
   
 public:
   ClockServo(String servoTitle, int servoPin, int minAngle, int maxAngle, int minAge, int maxAge)
-    : title(servoTitle), pin(servoPin), angleMin(minAngle), angleMax(maxAngle), ageMin(minAge), ageMax(maxAge) {}
+    : title(servoTitle), pin(servoPin), angleMin(minAngle), angleMax(maxAngle), ageMin(minAge), ageMax(maxAge) {
+      if (title == "Day") {
+        memcpy(positions, dayAngles, 31+1);
+      }
+      else if (title == "Month") {
+        memcpy(positions, monthAngles, 12+1);
+      }
+      else if (title == "Year") {
+        memcpy(positions, yearAngles, 17+1);
+      }
+    }
 
   
   void servoAttach() {
@@ -115,11 +125,20 @@ public:
     clockServo.write(angle);
     delay(500);
   }
+
+  int ageToAngle(int newAge) {
+    int angle = positions[newAge];
+    if(angle == NULL) {
+      Serial.println("Error: NULL position");
+      angle = 0;
+    }
+    return angle;
+  }
   
 
   void updateAge(int newAge){
     servoAttach();
-    setAngle(map(newAge, ageMin, ageMax, angleMin, angleMax));
+    setAngle(ageToAngle(newAge));
     servoDetach();
   }
 
@@ -142,7 +161,7 @@ public:
     for (newAge = ageMin; newAge <= ageMax; newAge += 1) {
       Serial.print("Age: ");
       Serial.println(newAge);
-      setAngle(map(newAge, ageMin, ageMax, angleMin, angleMax));
+      setAngle(ageToAngle(newAge));
       delay(500); 
     }
     delay(1000);
