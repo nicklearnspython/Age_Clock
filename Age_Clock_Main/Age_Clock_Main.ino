@@ -8,7 +8,7 @@
 #include <SoftwareSerial.h>
 #include <Servo.h>
 
-bool isAutoplayEnabled = false;
+bool isAutoplayEnabled = true;
 
 static const uint8_t RXPin = 4, TXPin = 3;
 static const uint8_t dummy_RXPin = 13, dummy_TXPin = 12;
@@ -51,7 +51,7 @@ static const int monthServoAngleMax = 180;
 static const int yearServoAngleMin = 0;
 static const int yearServoAngleMax = 180;
 
-static const uint8_t dayAngles[] = {0, 7, 12, 18, 23, 29, 35, 40, 45, 51, 56, 62, 66, 72, 77, 83, 89, 95, 101, 106, 112, 119, 126, 132, 138, 145, 151, 159, 167, 173, 180};
+static const uint8_t dayAngles[] = {0, 5, 9, 13, 20, 26, 31, 36, 41, 47, 51, 56, 62, 66, 72, 78, 83, 89, 94, 100, 106, 113, 119, 125, 131, 138, 144, 152, 162, 166, 175};
 static const uint8_t monthAngles[] = {0, 15, 30, 44, 58, 72, 85, 100, 117, 133, 150, 170};
 static const uint8_t yearAngles[] = {0, 8, 18, 27, 37, 47, 57, 68, 80, 92, 104, 117, 130, 141, 154, 166, 179};
 
@@ -238,7 +238,7 @@ void loop(){
   printMenu();
 
   if (isAutoplayEnabled){
-    input  = 7;
+    input  = 9;
   }
   else {
     while (Serial.available() == 0) {}
@@ -282,7 +282,7 @@ void loop(){
       break;
 
     case 7: 
-      monthServo.userSetAngle();
+      dayServo.userSetAngle();
       break;
 
     case 8:
