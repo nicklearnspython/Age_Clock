@@ -6,15 +6,12 @@
 #include <TimeLib.h>
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
-#include <Servo.h>
 
 #include "AgeCalculator.h"
 #include "ClockConstants.h"
-#include "ClockServo.h"
+#include "StepperEffector.h"
 
-ClockServo dayServo(dayServoTitle, dayServoPin, dayServoAngleMin, dayServoAngleMax, daysMin, daysMax);
-ClockServo monthServo(monthServoTitle, monthServoPin, monthServoAngleMin, monthServoAngleMax, monthsMin, monthsMax);
-ClockServo yearServo(yearServoTitle, yearServoPin, yearServoAngleMin, yearServoAngleMax, yearsMin, yearsMax);
+StepperEffector year_effector(stepperStepsPerRevolution, stepperPin1, stepperPin2, stepperPin3, stepperPin4);
 
 TinyGPSPlus gps;
 SoftwareSerial ss(RXPin, TXPin);                    // The serial connection to the GPS device
@@ -37,7 +34,7 @@ void loop(){
   printMenu();
 
   if (isAutoplayEnabled){
-    input  = 9;
+    input  = 10;
   }
   else {
     while (Serial.available() == 0) {}
@@ -62,36 +59,12 @@ void loop(){
       calculateAge(day(), month(), year(), ageDay, ageMonth, ageYear);
       break;
 
-    case 4:
-      dayServo.zero();
-      monthServo.zero();
-      yearServo.zero();
-      break;
-
-    case 5:
-      dayServo.center();
-      monthServo.center();
-      yearServo.center();
-      break;
-
-    case 6:
-      dayServo.sweep();
-      monthServo.sweep();
-      yearServo.sweep();
-      break;
-
-    case 7:
-      dayServo.userSetAngle();
-      break;
-
-    case 8:
-      dayServo.angleCalibration();
-      monthServo.angleCalibration();
-      yearServo.angleCalibration();
-      break;
-
     case 9:
       runAgeClock();
+      break;
+
+    case 10:
+      testYearStepper();
       break;
 
     default:
@@ -180,12 +153,8 @@ void printMenu() {
   Serial.println("1. Test Age Calculator.");
   Serial.println("2. Print GPS Time data.");
   Serial.println("3. Use GPS to calculate Age.");
-  Serial.println("4. Zero all Servos.");
-  Serial.println("5. Center all Servos.");
-  Serial.println("6. Sweep all Servos.");
-  Serial.println("7. User Set Servo Position.");
-  Serial.println("8. Calibrate Servos");
   Serial.println("9. Run Age Clock");
+  Serial.println("10. Test Year Stepper");
 }
 
 
@@ -194,12 +163,23 @@ void runAgeClock() {
     listenForGPSMessages();
     calculateAge(day(), month(), year(), ageDay, ageMonth, ageYear);
 
-    dayServo.updateAge(ageDay);
-    monthServo.updateAge(ageMonth);
-    yearServo.updateAge(ageYear);
+    year_effector.displayYear(ageYear);
 
     Serial.println();
     delay(10000);
   }
 
+}
+
+
+void testYearStepper() {
+  unsigned int currentYear = yearsMin;
+  while (true) {
+    year_effector.displayYear(currentYear);
+    currentYear++;
+    if (currentYear > static_cast<unsigned int>(yearsMax)) {
+      currentYear = yearsMin;
+    }
+    delay(1000);
+  }
 }
