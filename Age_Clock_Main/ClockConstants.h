@@ -31,6 +31,13 @@ static const int dayServoPin = 11;
 static const int monthServoPin = 10;
 static const int yearServoPin = 9;
 
+static const int stepperStepsPerRevolution = 2048;
+static const int stepperPin1 = 8;
+static const int stepperPin2 = 9;
+static const int stepperPin3 = 10;
+static const int stepperPin4 = 11;
+static const int stepperSpeedRPM = 10;
+
 static const int daysMin = 0;
 static const int daysMax = 30;
 static const int monthsMin = 0;
@@ -54,4 +61,3 @@ static const int CST_offset = -6;  // Central Standard Time (USA)
 static const int CDT_offset = -5;  // Central Daylight Time (USA)
 static const int PST_offset = -8;  // Pacific Standard Time (USA)
 static const int PDT_offset = -7;  // Pacific Daylight Time (USA)
-
