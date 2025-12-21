@@ -25,6 +25,11 @@ void setup(){
   ss.begin(GPSBaud);
   dummy_ss.begin(GPSBaud);
 
+  year_effector.begin(yearHomePin, yearHomeOffsetSteps);
+  if (!year_effector.home()) {
+    Serial.println("Warning: Year stepper homing failed.");
+  }
+
   Serial.println("");
   Serial.println("------- Age Clock Initiate -------");
 }
@@ -160,6 +165,10 @@ void printMenu() {
 
 void runAgeClock() {
   while(true){
+    if (!year_effector.isHomed()) {
+      Serial.println("Error: Year effector not homed. Aborting run.");
+      return;
+    }
     listenForGPSMessages();
     calculateAge(day(), month(), year(), ageDay, ageMonth, ageYear);
 
@@ -173,6 +182,10 @@ void runAgeClock() {
 
 
 void testYearStepper() {
+  if (!year_effector.isHomed() && !year_effector.home()) {
+    Serial.println("Error: Unable to home year stepper." );
+    return;
+  }
   unsigned int currentYear = yearsMin;
   while (true) {
     year_effector.displayYear(currentYear);
