@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Servo.h>
+
 /// @class Servo class that for the clock
 class ClockServo {
 private:

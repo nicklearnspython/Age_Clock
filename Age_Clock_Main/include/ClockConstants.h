@@ -39,6 +39,7 @@ static const int stepperPin4 = 11;
 static const int stepperSpeedRPM = 10;
 static const int yearHomePin = 7;
 static const long yearHomeOffsetSteps = 0;
+static const uint8_t ledDataPin = 6;
 
 static const int daysMin = 0;
 static const int daysMax = 30;
@@ -46,6 +47,9 @@ static const int monthsMin = 0;
 static const int monthsMax = 11;
 static const int yearsMin = 0;
 static const int yearsMax = 17;
+static const unsigned int dayLedCount = daysMax + 0;
+static const unsigned int monthLedCount = monthsMax + 0;
+static const unsigned int yearLedCount = yearsMax + 0;
 
 static const int dayServoAngleMin = 0;
 static const int dayServoAngleMax = 180;

@@ -3,15 +3,17 @@
  * The Age Clock
  */
 
-#include <TimeLib.h>
-#include <TinyGPS++.h>
 #include <SoftwareSerial.h>
+#include <TimeLib.h>
+#include <TinyGPSPlus.h>
 
-#include "AgeCalculator.h"
-#include "ClockConstants.h"
-#include "StepperEffector.h"
+#include "include/AgeCalculator.h"
+#include "include/ClockConstants.h"
+#include "include/LedEffector.h"
+#include "include/StepperEffector.h"
 
 StepperEffector year_effector(stepperStepsPerRevolution, stepperPin1, stepperPin2, stepperPin3, stepperPin4);
+LedEffector led_effector(ledDataPin, dayLedCount, monthLedCount, yearLedCount);
 
 TinyGPSPlus gps;
 SoftwareSerial ss(RXPin, TXPin);                    // The serial connection to the GPS device
@@ -39,7 +41,7 @@ void loop(){
   printMenu();
 
   if (isAutoplayEnabled){
-    input  = 10;
+    input  = 11;
   }
   else {
     while (Serial.available() == 0) {}
@@ -70,6 +72,10 @@ void loop(){
 
     case 10:
       testYearStepper();
+      break;
+
+    case 11:
+      testDayMonthLeds();
       break;
 
     default:
@@ -160,6 +166,7 @@ void printMenu() {
   Serial.println("3. Use GPS to calculate Age.");
   Serial.println("9. Run Age Clock");
   Serial.println("10. Test Year Stepper");
+  Serial.println("11. Test Day/Month LEDs");
 }
 
 
@@ -194,5 +201,27 @@ void testYearStepper() {
       currentYear = yearsMin;
     }
     delay(1000);
+  }
+}
+
+
+void testDayMonthLeds() {
+  unsigned int currentDay = daysMin;
+  unsigned int currentMonth = monthsMin;
+
+  while (true) {
+    led_effector.displayDay(currentDay);
+    led_effector.displayMonth(currentMonth);
+
+    currentDay++;
+    if (currentDay > static_cast<unsigned int>(daysMax)) {
+      currentDay = daysMin;
+      currentMonth++;
+      if (currentMonth > static_cast<unsigned int>(monthsMax)) {
+        currentMonth = monthsMin;
+      }
+    }
+
+    delay(500);
   }
 }
