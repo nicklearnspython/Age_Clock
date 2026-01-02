@@ -80,8 +80,11 @@ void count(){
   }
 }
 
-void testStepperButton(){
+bool isStepperSwitchPressed()
+{
+  // Based on Debounce Button Example
   // Setup static variables
+  static const bool pressedState = LOW;
   static bool buttonState = digitalRead(stepperHomingSwitchPin);
   static bool lastButtonState = HIGH;             // Pullup up so default is high
   static unsigned long lastDebounceTime = 0;      // ms
@@ -103,14 +106,25 @@ void testStepperButton(){
     if (reading != buttonState) {
       buttonState = reading;
 
-      // For testing purposes, print the change of state
-      Serial.print("Changed State to ");
-      Serial.println(buttonState);
+      if(buttonState == pressedState)
+      {
+        lastButtonState = reading;
+        return true;
+      }
     }
   }
 
   // Save the current reading
   lastButtonState = reading;
+  return false;
+}
+
+void testStepperButton(){
+  if(isStepperSwitchPressed())
+  {
+    // For testing purposes, print the change of state
+    Serial.println("Stepper button was pressed!");
+  }
 }
 
 
