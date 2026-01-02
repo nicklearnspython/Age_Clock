@@ -38,6 +38,7 @@ static const int stepperPin1 = 8;
 static const int stepperPin2 = 9;
 static const int stepperPin3 = 10;
 static const int stepperPin4 = 11;
+static const int stepperHomingSwitchPin = 5;
 static const int stepperSpeedRPM = 10;
 static const int yearHomePin = 7;
 static const long yearHomeOffsetSteps = 0;

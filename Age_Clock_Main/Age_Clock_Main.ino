@@ -10,18 +10,26 @@
 LedEffector * led_effector;
 
 void setup() {
-  pinMode(LED_BUILTIN, OUTPUT); // Built in LED Setup
-  setLedHigh();
+  // Starting Serial
   Serial.begin(9600);
-  Serial.println("Setup Complete. Starting loop.");
+  Serial.println("Welcome to the Age Clock. Starting Setup.");
+
+  // Setup the LED Effector
   led_effector = new LedEffector(dayLedCount, monthLedCount, yearLedCount);
   FastLED.setBrightness(128);
   FastLED.clearData();
+
+  // Setup Stepper
+  pinMode(stepperHomingSwitchPin, INPUT_PULLUP);
+
+  // Setup Complete
+  Serial.println("Setup Complete. Starting loop.");
 }
 
 void loop() {
   //blink();
-  count();
+  //count();
+  testStepperButton();
 }
 
 void setLedHigh(){
@@ -71,6 +79,40 @@ void count(){
     led_effector->displayMonth(3);
   }
 }
+
+void testStepperButton(){
+  // Setup static variables
+  static bool buttonState = digitalRead(stepperHomingSwitchPin);
+  static bool lastButtonState = HIGH;             // Pullup up so default is high
+  static unsigned long lastDebounceTime = 0;      // ms
+  static const unsigned long debounceDelay = 50;  // ms
+
+  // read the current homing switch state
+  int reading = digitalRead(stepperHomingSwitchPin);
+
+  // If the switch changed regardless of how, reset the debouncing timer
+  if (reading != lastButtonState) {
+    lastDebounceTime = millis();
+  }
+
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    // whatever the reading is at, it's been there for longer than the debounce
+    // delay, so take it as the actual current state:
+
+    // if the button state has changed:
+    if (reading != buttonState) {
+      buttonState = reading;
+
+      // For testing purposes, print the change of state
+      Serial.print("Changed State to ");
+      Serial.println(buttonState);
+    }
+  }
+
+  // Save the current reading
+  lastButtonState = reading;
+}
+
 
 //void testDayMonthLeds() {
 //  unsigned int currentDay = daysMin;
