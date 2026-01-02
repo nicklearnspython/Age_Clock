@@ -1,14 +1,60 @@
 #pragma once
 
+#include <bitswap.h>
+#include <chipsets.h>
+#include <chsv.h>
+#include <cled_controller.h>
+#include <color.h>
+#include <colorpalettes.h>
+#include <colorutils.h>
+#include <controller.h>
+#include <cpixel_ledcontroller.h>
+#include <cpp_compat.h>
+#include <crgb.h>
+#include <dither_mode.h>
+#include <dmx.h>
+#include <eorder.h>
+#include <fastled_config.h>
+#include <fastled_delay.h>
+#include <fastled_progmem.h>
 #include <FastLED.h>
+#include <fastpin.h>
+#include <fastspi_bitbang.h>
+#include <fastspi_dma.h>
+#include <fastspi_nop.h>
+#include <fastspi_ref.h>
+#include <fastspi_types.h>
+#include <fastspi.h>
+#include <hsv2rgb.h>
+#include <led_sysdefs.h>
+#include <lib8tion.h>
+#include <noise.h>
+#include <noisegen.h>
+#include <pixel_controller.h>
+#include <pixel_iterator.h>
+#include <pixelset.h>
+#include <pixeltypes.h>
+#include <platforms.h>
+#include <power_mgt.h>
+#include <rgbw.h>
+#include <transpose8x1_noinline.h>
 
+#include "ClockConstants.h"
 #include "Effector.h"
+
+#ifdef __INTELLISENSE__
+#define FASTLED_HAS_CLOCKLESS 1
+#endif
+#include <FastLED.h>
+#ifndef NEOPIXEL
+#define LED_TYPE NEOPIXEL
+#endif
+
 
 /// Effector implementation that uses a single FastLED strip.
 class LedEffector final : public Effector {
 public:
   LedEffector(
-    uint8_t dataPin,
     unsigned int dayLedCount,
     unsigned int monthLedCount,
     unsigned int yearLedCount,
@@ -20,7 +66,7 @@ public:
       _active_color(activeColor)
   {
     _leds = new CRGB[_total_led_count];
-    FastLED.addLeds<NEOPIXEL, dataPin>(_leds, _total_led_count);
+    FastLED.addLeds<LED_TYPE, LED_PIN>(_leds, _total_led_count);
     clearStrip();
   }
 
@@ -46,7 +92,14 @@ public:
   }
 
   void clearStrip() {
+    Serial.println("Clearing LED strip");
     fill_solid(_leds, _total_led_count, CRGB::Black);
+    FastLED.show();
+  }
+
+  void fillStrip() {
+    Serial.println("Filling strip with Red");
+    fill_solid(_leds, _total_led_count, CRGB::Red);
     FastLED.show();
   }
 

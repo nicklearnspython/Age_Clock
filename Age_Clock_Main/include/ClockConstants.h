@@ -1,5 +1,7 @@
 #pragma once
 
+#include <FastLED.h>
+
 /// Constants
 
 bool isAutoplayEnabled = true;
@@ -40,6 +42,9 @@ static const int stepperSpeedRPM = 10;
 static const int yearHomePin = 7;
 static const long yearHomeOffsetSteps = 0;
 static const uint8_t ledDataPin = 6;
+#define LED_PIN 6
+#define LED_TYPE NEOPIXEL // Previously used WS2812B
+#define COLOR_ORDER GRB
 
 static const int daysMin = 0;
 static const int daysMax = 30;
@@ -49,7 +54,7 @@ static const int yearsMin = 0;
 static const int yearsMax = 17;
 static const unsigned int dayLedCount = daysMax + 0;
 static const unsigned int monthLedCount = monthsMax + 0;
-static const unsigned int yearLedCount = yearsMax + 0;
+static const unsigned int yearLedCount = 0;
 
 static const int dayServoAngleMin = 0;
 static const int dayServoAngleMax = 180;

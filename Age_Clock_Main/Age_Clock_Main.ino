@@ -3,225 +3,92 @@
  * The Age Clock
  */
 
-#include <SoftwareSerial.h>
-#include <TimeLib.h>
-#include <TinyGPSPlus.h>
+#include <Arduino.h>
 
-#include "include/AgeCalculator.h"
-#include "include/ClockConstants.h"
 #include "include/LedEffector.h"
-#include "include/StepperEffector.h"
 
-StepperEffector year_effector(stepperStepsPerRevolution, stepperPin1, stepperPin2, stepperPin3, stepperPin4);
-LedEffector led_effector(ledDataPin, dayLedCount, monthLedCount, yearLedCount);
+LedEffector * led_effector;
 
-TinyGPSPlus gps;
-SoftwareSerial ss(RXPin, TXPin);                    // The serial connection to the GPS device
-SoftwareSerial dummy_ss(dummy_RXPin, dummy_TXPin);  // The serial connection to a dummy serial device. This prevents interrupts to servo control
-time_t prevDisplay = 0;
-
-int input = 0;
-
-void setup(){
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT); // Built in LED Setup
+  setLedHigh();
   Serial.begin(9600);
-  ss.begin(GPSBaud);
-  dummy_ss.begin(GPSBaud);
-
-  year_effector.begin(yearHomePin, yearHomeOffsetSteps);
-  if (!year_effector.home()) {
-    Serial.println("Warning: Year stepper homing failed.");
-  }
-
-  Serial.println("");
-  Serial.println("------- Age Clock Initiate -------");
+  Serial.println("Setup Complete. Starting loop.");
+  led_effector = new LedEffector(dayLedCount, monthLedCount, yearLedCount);
+  FastLED.setBrightness(128);
+  FastLED.clearData();
 }
 
+void loop() {
+  //blink();
+  count();
+}
 
-void loop(){
-  printMenu();
+void setLedHigh(){
+  Serial.println("Setting led high.");
+  led_effector->fillStrip();
+}
 
-  if (isAutoplayEnabled){
-    input  = 11;
-  }
-  else {
-    while (Serial.available() == 0) {}
-    input = Serial.parseInt();
-  }
+void setLedLow(){
+  Serial.println("Setting led low.");
+  led_effector->clearStrip();
+}
 
-  Serial.print("You inputed the value: ");
-  Serial.println(input);
+void blink(){
+  static unsigned long lastToggle = 0;
+  static bool isHigh = false;
+  unsigned long now = millis();
 
-  switch (input) {
-
-    case 1:
-      testAgeCalculater();
-      break;
-
-    case 2:
-      listenForGPSMessages();
-      break;
-
-    case 3:
-      listenForGPSMessages();
-      calculateAge(day(), month(), year(), ageDay, ageMonth, ageYear);
-      break;
-
-    case 9:
-      runAgeClock();
-      break;
-
-    case 10:
-      testYearStepper();
-      break;
-
-    case 11:
-      testDayMonthLeds();
-      break;
-
-    default:
-      Serial.print("Error: This value is not an option: ");
-      Serial.println(input);
-      delay(1000);
+  if (now - lastToggle >= 500) {
+    lastToggle = now;
+    if (isHigh) {
+      setLedLow();
+    } else {
+      setLedHigh();
+    }
+    isHigh = !isHigh;
   }
 }
 
+void count(){
+  static unsigned long lastIncrement = 0;
+  unsigned long now = millis();
+  static int day_incr = 1;
 
-void listenForGPSMessages() {
-  ss.listen();
-  delay(1500);
-  bool clock_updated = false;
-
-  while (!clock_updated) {
-
-    if (!ss.available()){
-      continue;
+  if (now - lastIncrement >= 500) {
+    lastIncrement = now;
+    if (day_incr >= daysMax)
+    {
+      Serial.println("Resetting LED count");
+      day_incr = 1;
+    }
+    else {
+      Serial.println("Incrementing LED.");
+      ++day_incr;
     }
 
-    if(gps.encode(ss.read())) {
-
-      if (!gps.date.isValid()) {
-        Serial.println("Error: Date is not Valid.");
-        continue;
-      }
-
-      if (gps.date.age() > 1500) {
-        Serial.print("Warning: Age is old: ");
-        Serial.println(gps.date.age());
-        continue;
-      }
-
-      setTime(gps.time.hour(), gps.time.minute(), gps.time.second(), gps.date.day(), gps.date.month(), gps.date.year());
-      adjustTime(PDT_offset * SECS_PER_HOUR);
-
-      updateClock();
-      clock_updated = true;
-    }
-  }
-  dummy_ss.listen();
-}
-
-
-void updateClock(){
-  if (timeStatus()!= timeNotSet) {
-    if (now() != prevDisplay) { //update the display only if the time has changed
-      Serial.print("Time difference: ");
-      Serial.println(now() - prevDisplay);
-      prevDisplay = now();
-      digitalClockDisplay();
-    }
+    led_effector->displayDay(day_incr);
+    led_effector->displayMonth(3);
   }
 }
 
-
-void digitalClockDisplay(){
-  // digital clock display of the time
-  Serial.print("Current Time and Date: ");
-  Serial.print(hour());
-  printDigits(minute());
-  printDigits(second());
-  Serial.print(" ");
-  Serial.print(day());
-  Serial.print(" ");
-  Serial.print(month());
-  Serial.print(" ");
-  Serial.print(year());
-  Serial.println();
-}
-
-
-void printDigits(int digits) {
-  // utility function for digital clock display: prints preceding colon and leading 0
-  Serial.print(":");
-  if(digits < 10)
-    Serial.print('0');
-  Serial.print(digits);
-}
-
-
-void printMenu() {
-  Serial.println();
-  Serial.println("******* Menu *******");
-  Serial.println("1. Test Age Calculator.");
-  Serial.println("2. Print GPS Time data.");
-  Serial.println("3. Use GPS to calculate Age.");
-  Serial.println("9. Run Age Clock");
-  Serial.println("10. Test Year Stepper");
-  Serial.println("11. Test Day/Month LEDs");
-}
-
-
-void runAgeClock() {
-  while(true){
-    if (!year_effector.isHomed()) {
-      Serial.println("Error: Year effector not homed. Aborting run.");
-      return;
-    }
-    listenForGPSMessages();
-    calculateAge(day(), month(), year(), ageDay, ageMonth, ageYear);
-
-    year_effector.displayYear(ageYear);
-
-    Serial.println();
-    delay(10000);
-  }
-
-}
-
-
-void testYearStepper() {
-  if (!year_effector.isHomed() && !year_effector.home()) {
-    Serial.println("Error: Unable to home year stepper." );
-    return;
-  }
-  unsigned int currentYear = yearsMin;
-  while (true) {
-    year_effector.displayYear(currentYear);
-    currentYear++;
-    if (currentYear > static_cast<unsigned int>(yearsMax)) {
-      currentYear = yearsMin;
-    }
-    delay(1000);
-  }
-}
-
-
-void testDayMonthLeds() {
-  unsigned int currentDay = daysMin;
-  unsigned int currentMonth = monthsMin;
-
-  while (true) {
-    led_effector.displayDay(currentDay);
-    led_effector.displayMonth(currentMonth);
-
-    currentDay++;
-    if (currentDay > static_cast<unsigned int>(daysMax)) {
-      currentDay = daysMin;
-      currentMonth++;
-      if (currentMonth > static_cast<unsigned int>(monthsMax)) {
-        currentMonth = monthsMin;
-      }
-    }
-
-    delay(500);
-  }
-}
+//void testDayMonthLeds() {
+//  unsigned int currentDay = daysMin;
+//  unsigned int currentMonth = monthsMin;
+//
+//  while (true) {
+//    led_effector.displayDay(currentDay);
+//    led_effector.displayMonth(currentMonth);
+//
+//    currentDay++;
+//    if (currentDay > static_cast<unsigned int>(daysMax)) {
+//      currentDay = daysMin;
+//      currentMonth++;
+//      if (currentMonth > static_cast<unsigned int>(monthsMax)) {
+//        currentMonth = monthsMin;
+//      }
+//    }
+//
+//    delay(500);
+//  }
+//}
