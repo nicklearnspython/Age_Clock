@@ -29,7 +29,8 @@ void setup() {
 void loop() {
   //blink();
   //count();
-  testStepperButton();
+  //testStepperButton();
+  testStepperButtonWithLeds();
 }
 
 void setLedHigh(){
@@ -125,6 +126,18 @@ void testStepperButton(){
     // For testing purposes, print the change of state
     Serial.println("Stepper button was pressed!");
   }
+}
+
+void testStepperButtonWithLeds()
+{
+  static int led_count = 1;
+  if(isStepperSwitchPressed())
+  {
+    ++led_count;
+  }
+
+    led_effector->displayDay(led_count);
+    led_effector->displayMonth(3);
 }
 
 
