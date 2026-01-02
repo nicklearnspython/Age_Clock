@@ -1,6 +1,8 @@
 {
     "configuration": "cpu=atmega328",
     "board": "arduino:avr:nano",
+    "output": "../build",
     "programmer": "avrispmkii",
-    "sketch": "Age_Clock_Main/Age_Clock_Main.ino"
+    "sketch": "Age_Clock_Main/Age_Clock_Main.ino",
+    "port": "/dev/ttyUSB0"
 }
