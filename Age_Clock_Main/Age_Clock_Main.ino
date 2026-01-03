@@ -16,7 +16,7 @@ void setup() {
 
   // Setup the LED Effector
   led_effector = new LedEffector();
-  FastLED.setBrightness(64);
+  FastLED.setBrightness(32);
   FastLED.clearData();
 
   // Setup Stepper
@@ -67,23 +67,24 @@ void count(){
 
   if (now - lastIncrement >= 500) {
     lastIncrement = now;
-    if (month_count > monthsMax)
-    {
-      Serial.println("Resetting All LED counts");
-      month_count = 0;
-      day_count = 0;
-      led_effector->clearStrip();
-    }
-    else if (day_count >= daysMax)
+
+    // Increment the day
+    ++day_count;
+
+    if (day_count > daysMax)
     {
       Serial.println("Incrementing Month LED count");
       ++month_count;
       day_count = 0;
       led_effector->clearStrip();
     }
-    else {
-      Serial.println("Incrementing Day LED count");
-      ++day_count;
+
+    if (month_count > monthsMax)
+    {
+      Serial.println("Resetting All LED counts");
+      month_count = 0;
+      day_count = 0;
+      led_effector->clearStrip();
     }
 
     Serial.print("Month count: ");

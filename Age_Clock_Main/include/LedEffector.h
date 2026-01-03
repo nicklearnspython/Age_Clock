@@ -7,9 +7,8 @@
 /// Effector implementation that uses a single FastLED strip.
 class LedEffector final : public Effector {
 public:
-  LedEffector(
-    CRGB::HTMLColorCode activeColor = CRGB::White)
-    : _total_led_count(dayLedCount + monthLedCount + yearLedCount),
+  LedEffector(CRGB::HTMLColorCode activeColor = CRGB::White)
+    : _total_led_count(dayLedCount + monthLedCount + yearLedCount + 1), // Led 0 is not displaying so add an additional led
       _active_color(activeColor)
   {
     // The month and day led strands are a single continuous strand
