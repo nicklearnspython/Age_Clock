@@ -8,14 +8,14 @@
 class LedEffector final : public Effector {
 public:
   LedEffector(CRGB::HTMLColorCode activeColor = CRGB::White)
-    : _total_led_count(dayLedCount + monthLedCount + yearLedCount + 1), // Led 0 is not displaying so add an additional led
+    : _total_led_count(DAY_LED_COUNT + MONTH_LED_COUNT + YEAR_LED_COUNT + 1), // Led 0 is not displaying so add an additional led
       _active_color(activeColor)
   {
     // The month and day led strands are a single continuous strand
     _all_leds = new CRGB[_total_led_count];
     _first_month_led = _all_leds + 1;                  // the month strand is first
-    _first_day_led = _first_month_led + monthLedCount; // the day strand is second
-    _first_year_led = _first_day_led + dayLedCount;    // the hypothetical year strand is last
+    _first_day_led = _first_month_led + MONTH_LED_COUNT; // the day strand is second
+    _first_year_led = _first_day_led + DAY_LED_COUNT;    // the hypothetical year strand is last
 
     FastLED.addLeds<LED_TYPE, LED_PIN>(_all_leds, _total_led_count);
     clearStrip();
@@ -30,17 +30,17 @@ public:
   }
 
   void displayDay(unsigned int day) override {
-    fill_solid(_first_day_led, ledsPerDay * (day + 1), _active_color);
+    fill_solid(_first_day_led, LEDS_PER_DAY * (day + 1), _active_color);
     FastLED.show();
   }
 
   void displayMonth(unsigned int month) override {
-    fill_solid(_first_month_led, ledsPerMonth * (month + 1), _active_color);
+    fill_solid(_first_month_led, LEDS_PER_MONTH * (month + 1), _active_color);
     FastLED.show();
   }
 
   void displayYear(unsigned int year) override {
-    fill_solid(_first_year_led, ledsPerMonth * (year + 1), _active_color);
+    fill_solid(_first_year_led, LEDS_PER_MONTH * (year + 1), _active_color);
     FastLED.show();
   }
 

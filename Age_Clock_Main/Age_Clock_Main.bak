@@ -12,8 +12,8 @@
 #include "include/LedEffector.h"
 #include "include/StepperEffector.h"
 
-StepperEffector year_effector(stepperStepsPerRevolution, stepperPin1, stepperPin2, stepperPin3, stepperPin4);
-LedEffector led_effector(dayLedCount, monthLedCount, yearLedCount);
+StepperEffector year_effector(stepperStepsPerRevolution, STEPPER_PIN_1, STEPPER_PIN_2, STEPPER_PIN_3, STEPPER_PIN_4);
+LedEffector led_effector(DAY_LED_COUNT, MONTH_LED_COUNT, YEAR_LED_COUNT);
 
 TinyGPSPlus gps;
 //SoftwareSerial ss(RXPin, TXPin);                    // The serial connection to the GPS device
@@ -206,12 +206,12 @@ void testYearStepper() {
     Serial.println("Error: Unable to home year stepper." );
     return;
   }
-  unsigned int currentYear = yearsMin;
+  unsigned int currentYear = YEARS_MIN;
   while (true) {
     year_effector.displayYear(currentYear);
     currentYear++;
-    if (currentYear > static_cast<unsigned int>(yearsMax)) {
-      currentYear = yearsMin;
+    if (currentYear > static_cast<unsigned int>(YEARS_MAX)) {
+      currentYear = YEARS_MIN;
     }
     delay(1000);
   }
@@ -219,19 +219,19 @@ void testYearStepper() {
 
 
 void testDayMonthLeds() {
-  unsigned int currentDay = daysMin;
-  unsigned int currentMonth = monthsMin;
+  unsigned int currentDay = DAYS_MIN;
+  unsigned int currentMonth = MONTHS_MIN;
 
   while (true) {
     led_effector.displayDay(currentDay);
     led_effector.displayMonth(currentMonth);
 
     currentDay++;
-    if (currentDay > static_cast<unsigned int>(daysMax)) {
-      currentDay = daysMin;
+    if (currentDay > static_cast<unsigned int>(DAYS_MAX)) {
+      currentDay = DAYS_MIN;
       currentMonth++;
-      if (currentMonth > static_cast<unsigned int>(monthsMax)) {
-        currentMonth = monthsMin;
+      if (currentMonth > static_cast<unsigned int>(MONTHS_MAX)) {
+        currentMonth = MONTHS_MIN;
       }
     }
 

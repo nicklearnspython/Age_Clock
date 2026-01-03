@@ -20,7 +20,7 @@ public:
       _month_steps_per_unit(calculateStepsPerUnit(stepsPerRevolution, _months_per_revolution)),
       _year_steps_per_unit(calculateStepsPerUnit(stepsPerRevolution, _years_per_revolution))
   {
-    _stepper.setSpeed(stepperSpeedRPM);
+    _stepper.setSpeed(STEPPER_RPM);
   }
 
   void begin(int homePin, long zeroOffsetSteps) {

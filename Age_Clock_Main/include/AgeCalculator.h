@@ -38,7 +38,7 @@ void calculateAge(
   int monthModifier = 0;
   int yearModifier = 0;
 
-  int dayDiff = inputDay - birthDay;
+  int dayDiff = inputDay - BIRTH_DAY;
   if (dayDiff >= 0) {
     ageDay = dayDiff;
   }
@@ -55,7 +55,7 @@ void calculateAge(
     Serial.println("Error: dayDiff not a number?");
   }
 
-  int monthDiff = inputMonth - birthMonth - monthModifier;
+  int monthDiff = inputMonth - BIRTH_MONTH - monthModifier;
   if (monthDiff >= 0) {
     ageMonth = monthDiff;
   }
@@ -67,14 +67,14 @@ void calculateAge(
     Serial.println("Error: monthDiff not a number?");
   }
 
-  ageYear = inputYear - birthYear - yearModifier;
+  ageYear = inputYear - BIRTH_YEAR - yearModifier;
 
   Serial.print("Birthday: ");
-  Serial.print(birthMonth);
+  Serial.print(BIRTH_MONTH);
   Serial.print(" / ");
-  Serial.print(birthDay);
+  Serial.print(BIRTH_DAY);
   Serial.print(" / ");
-  Serial.println(birthYear);
+  Serial.println(BIRTH_YEAR);
 
   Serial.print("You are ");
   Serial.print(ageYear);

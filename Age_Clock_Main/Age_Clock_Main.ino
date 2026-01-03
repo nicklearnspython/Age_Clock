@@ -20,7 +20,7 @@ void setup() {
   FastLED.clearData();
 
   // Setup Stepper
-  pinMode(stepperHomingSwitchPin, INPUT_PULLUP);
+  pinMode(STEPPER_HOMING_PIN, INPUT_PULLUP);
 
   // Setup Complete
   Serial.println("Setup Complete. Starting loop.");
@@ -71,7 +71,7 @@ void count(){
     // Increment the day
     ++day_count;
 
-    if (day_count > daysMax)
+    if (day_count > DAYS_MAX)
     {
       Serial.println("Incrementing Month LED count");
       ++month_count;
@@ -79,7 +79,7 @@ void count(){
       led_effector->clearStrip();
     }
 
-    if (month_count > monthsMax)
+    if (month_count > MONTHS_MAX)
     {
       Serial.println("Resetting All LED counts");
       month_count = 0;
@@ -102,13 +102,13 @@ bool isStepperSwitchPressed()
   // Based on Debounce Button Example
   // Setup static variables
   static const bool pressedState = LOW;
-  static bool buttonState = digitalRead(stepperHomingSwitchPin);
+  static bool buttonState = digitalRead(STEPPER_HOMING_PIN);
   static bool lastButtonState = HIGH;             // Pullup up so default is high
   static unsigned long lastDebounceTime = 0;      // ms
   static const unsigned long debounceDelay = 50;  // ms
 
   // read the current homing switch state
-  int reading = digitalRead(stepperHomingSwitchPin);
+  int reading = digitalRead(STEPPER_HOMING_PIN);
 
   // If the switch changed regardless of how, reset the debouncing timer
   if (reading != lastButtonState) {
@@ -154,7 +154,7 @@ void testStepperButtonWithLeds()
   if(isStepperSwitchPressed())
   {
     ++day_count;
-    if (day_count > daysMax)
+    if (day_count > DAYS_MAX)
     {
       ++month_count;
       day_count = 0;

@@ -6,60 +6,58 @@
 
 bool isAutoplayEnabled = true;
 
-static const uint8_t RXPin = 4, TXPin = 3;
-static const uint8_t dummy_RXPin = 13, dummy_TXPin = 12;
-static const uint32_t GPSBaud = 9600;
+// Age Setup
+static const int DAYS_MIN = 0;
+static const int DAYS_MAX = 30;
+static const int MONTHS_MIN = 0;
+static const int MONTHS_MAX = 11;
+static const int YEARS_MIN = 0;
+static const int YEARS_MAX = 17;
 
 //C
-static const int birthDay = 30;
-static const int birthMonth = 12;
-static const int birthYear = 2016;
+static const int BIRTH_DAY = 30;
+static const int BIRTH_MONTH = 12;
+static const int BIRTH_YEAR = 2016;
 
 //P
-//static const int birthDay = 10;
-//static const int birthMonth = 11;
-//static const int birthYear = 2018;
+//static const int BIRTH_DAY = 10;
+//static const int BIRTH_MONTH = 11;
+//static const int BIRTH_YEAR = 2018;
 
 //J
-//static const int birthDay = 17;
-//static const int birthMonth = 6;
-//static const int birthYear = 2021;
+//static const int BIRTH_DAY = 17;
+//static const int BIRTH_MONTH = 6;
+//static const int BIRTH_YEAR = 2021;
 
-static const String dayServoTitle = "Day";
-static const String monthServoTitle = "Month";
-static const String yearServoTitle = "Year";
-
-static const int dayServoPin = 11;
-static const int monthServoPin = 10;
-static const int yearServoPin = 9;
-
+// Stepper Constants
 static const int stepperStepsPerRevolution = 2048;
-static const int stepperPin1 = 8;
-static const int stepperPin2 = 9;
-static const int stepperPin3 = 10;
-static const int stepperPin4 = 11;
-static const int stepperHomingSwitchPin = 5;
-static const int stepperSpeedRPM = 10;
+static const int STEPPER_PIN_1 = 8;
+static const int STEPPER_PIN_2 = 9;
+static const int STEPPER_PIN_3 = 10;
+static const int STEPPER_PIN_4 = 11;
+
+static const int STEPPER_HOMING_PIN = 5;
+static const int STEPPER_RPM = 10;
+
 static const int yearHomePin = 7;
 static const long yearHomeOffsetSteps = 0;
-static const uint8_t ledDataPin = 6;
+
+// LED Constants
 #define LED_PIN 6
 #define LED_TYPE NEOPIXEL // Previously used WS2812B
 #define COLOR_ORDER GRB
 
-static const int daysMin = 0;
-static const int daysMax = 30;
-static const int monthsMin = 0;
-static const int monthsMax = 11;
-static const int yearsMin = 0;
-static const int yearsMax = 17;
+static const unsigned int LEDS_PER_DAY = 1;
+static const unsigned int LEDS_PER_MONTH = 2;
+static const unsigned int LEDS_PER_YEAR = 0;
+static const unsigned int DAY_LED_COUNT = (DAYS_MAX + 1) * LEDS_PER_DAY;
+static const unsigned int MONTH_LED_COUNT = (MONTHS_MAX + 1) * LEDS_PER_MONTH;
+static const unsigned int YEAR_LED_COUNT = (YEARS_MAX + 1) * LEDS_PER_YEAR;
 
-static const unsigned int ledsPerDay = 1;
-static const unsigned int ledsPerMonth = 2;
-static const unsigned int ledsPerYear = 0;
-static const unsigned int dayLedCount = (daysMax + 1) * ledsPerDay;
-static const unsigned int monthLedCount = (monthsMax + 1) * ledsPerMonth;
-static const unsigned int yearLedCount = (yearsMax + 1) * ledsPerYear;
+// Servo Constants
+static const int dayServoPin = 11;
+static const int monthServoPin = 10;
+static const int yearServoPin = 9;
 
 static const int dayServoAngleMin = 0;
 static const int dayServoAngleMax = 180;
@@ -71,6 +69,11 @@ static const int yearServoAngleMax = 180;
 static const uint8_t dayAngles[] = {0, 5, 9, 13, 20, 26, 31, 36, 41, 47, 51, 56, 62, 66, 72, 78, 83, 89, 94, 100, 106, 113, 119, 125, 131, 138, 144, 152, 162, 166, 175};
 static const uint8_t monthAngles[] = {0, 15, 30, 44, 58, 72, 85, 100, 117, 133, 150, 170};
 static const uint8_t yearAngles[] = {0, 8, 18, 27, 37, 47, 57, 68, 80, 92, 104, 117, 130, 141, 154, 166, 179};
+
+// GPS Constants
+static const uint8_t RXPin = 4, TXPin = 3;
+static const uint8_t dummy_RXPin = 13, dummy_TXPin = 12;
+static const uint32_t GPSBaud = 9600;
 
 // Offset hours from gps time (UTC)
 static const int CST_offset = -6;  // Central Standard Time (USA)
