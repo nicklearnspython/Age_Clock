@@ -28,9 +28,9 @@ void setup() {
 
 void loop() {
   //blink();
-  //count();
+  count();
   //testStepperButton();
-  testStepperButtonWithLeds();
+  //testStepperButtonWithLeds();
 }
 
 void setLedHigh(){
@@ -62,22 +62,37 @@ void blink(){
 void count(){
   static unsigned long lastIncrement = 0;
   unsigned long now = millis();
-  static int day_incr = 1;
+  static int day_count = 0;
+  static int month_count = 0;
 
   if (now - lastIncrement >= 500) {
     lastIncrement = now;
-    if (day_incr >= daysMax)
+    if (month_count > monthsMax)
     {
-      Serial.println("Resetting LED count");
-      day_incr = 1;
+      Serial.println("Resetting All LED counts");
+      month_count = 0;
+      day_count = 0;
+      led_effector->clearStrip();
+    }
+    else if (day_count >= daysMax)
+    {
+      Serial.println("Incrementing Month LED count");
+      ++month_count;
+      day_count = 0;
+      led_effector->clearStrip();
     }
     else {
-      Serial.println("Incrementing LED.");
-      ++day_incr;
+      Serial.println("Incrementing Day LED count");
+      ++day_count;
     }
 
-    led_effector->displayDay(day_incr);
-    led_effector->displayMonth(3);
+    Serial.print("Month count: ");
+    Serial.print(month_count);
+    Serial.print(", Day count: ");
+    Serial.println(day_count);
+
+    led_effector->displayDay(day_count);
+    led_effector->displayMonth(month_count);
   }
 }
 
