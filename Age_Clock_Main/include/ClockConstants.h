@@ -53,9 +53,13 @@ static const int monthsMin = 0;
 static const int monthsMax = 11;
 static const int yearsMin = 0;
 static const int yearsMax = 17;
-static const unsigned int dayLedCount = daysMax + 0;
-static const unsigned int monthLedCount = monthsMax + 0;
-static const unsigned int yearLedCount = 0;
+
+static const unsigned int ledsPerDay = 1;
+static const unsigned int ledsPerMonth = 2;
+static const unsigned int ledsPerYear = 0;
+static const unsigned int dayLedCount = (daysMax + 1) * ledsPerDay;
+static const unsigned int monthLedCount = (monthsMax + 1) * ledsPerMonth;
+static const unsigned int yearLedCount = (yearsMax + 1) * ledsPerYear;
 
 static const int dayServoAngleMin = 0;
 static const int dayServoAngleMax = 180;
