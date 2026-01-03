@@ -15,8 +15,8 @@ void setup() {
   Serial.println("Welcome to the Age Clock. Starting Setup.");
 
   // Setup the LED Effector
-  led_effector = new LedEffector(dayLedCount, monthLedCount, yearLedCount);
-  FastLED.setBrightness(128);
+  led_effector = new LedEffector();
+  FastLED.setBrightness(64);
   FastLED.clearData();
 
   // Setup Stepper
@@ -130,34 +130,25 @@ void testStepperButton(){
 
 void testStepperButtonWithLeds()
 {
-  static int led_count = 1;
+  static int day_count = 0;
+  static int month_count = 0;
+  led_effector->displayDay(day_count);
+  led_effector->displayMonth(month_count);
+
   if(isStepperSwitchPressed())
   {
-    ++led_count;
+    ++day_count;
+    if (day_count > daysMax)
+    {
+      ++month_count;
+      day_count = 0;
+      led_effector->clearStrip();
+    }
+    Serial.print("The month count is now: ");
+    Serial.println(month_count);
+    Serial.print("The day count is now: ");
+    Serial.println(day_count);
+    led_effector->displayDay(day_count);
+    led_effector->displayMonth(month_count);
   }
-
-    led_effector->displayDay(led_count);
-    led_effector->displayMonth(3);
 }
-
-
-//void testDayMonthLeds() {
-//  unsigned int currentDay = daysMin;
-//  unsigned int currentMonth = monthsMin;
-//
-//  while (true) {
-//    led_effector.displayDay(currentDay);
-//    led_effector.displayMonth(currentMonth);
-//
-//    currentDay++;
-//    if (currentDay > static_cast<unsigned int>(daysMax)) {
-//      currentDay = daysMin;
-//      currentMonth++;
-//      if (currentMonth > static_cast<unsigned int>(monthsMax)) {
-//        currentMonth = monthsMin;
-//      }
-//    }
-//
-//    delay(500);
-//  }
-//}
