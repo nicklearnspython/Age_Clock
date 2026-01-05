@@ -6,8 +6,10 @@
 #include <Arduino.h>
 
 #include "include/LedEffector.h"
+#include "include/StepperEffector.h"
 
 LedEffector * led_effector;
+StepperEffector * year_effector;
 
 void setup() {
   // Starting Serial
@@ -20,7 +22,22 @@ void setup() {
   FastLED.clearData();
 
   // Setup Stepper
+  year_effector = new StepperEffector(
+    STEPPER_STEPS_PER_REV,
+    STEPPER_PIN_1,
+    STEPPER_PIN_2,
+    STEPPER_PIN_3,
+    STEPPER_PIN_4);
   pinMode(STEPPER_HOMING_PIN, INPUT_PULLUP);
+
+  Serial.println("Initializing the Stepper Motor");
+  year_effector->begin(STEPPER_HOMING_PIN, HOMING_OFFSET_STEPS);
+  if (!year_effector->home()) {
+    Serial.println("Warning: Year stepper homing failed.");
+  }
+  else {
+    Serial.println("Stepper Motor Homed.");
+  }
 
   // Setup Complete
   Serial.println("Setup Complete. Starting loop.");
