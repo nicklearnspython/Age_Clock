@@ -12,7 +12,7 @@
 #include "include/LedEffector.h"
 #include "include/StepperEffector.h"
 
-StepperEffector year_effector(stepperStepsPerRevolution, STEPPER_PIN_1, STEPPER_PIN_2, STEPPER_PIN_3, STEPPER_PIN_4);
+StepperEffector year_effector(STEPPER_STEPS_PER_REV, STEPPER_PIN_1, STEPPER_PIN_2, STEPPER_PIN_3, STEPPER_PIN_4);
 LedEffector led_effector(DAY_LED_COUNT, MONTH_LED_COUNT, YEAR_LED_COUNT);
 
 TinyGPSPlus gps;
@@ -28,7 +28,7 @@ void setup(){
   //ss.begin(GPSBaud);
   //dummy_ss.begin(GPSBaud);
 
-  year_effector.begin(yearHomePin, yearHomeOffsetSteps);
+  year_effector.begin(STEPPER_HOMING_PIN, HOMING_OFFSET_STEPS);
   if (!year_effector.home()) {
     Serial.println("Warning: Year stepper homing failed.");
   }
