@@ -35,6 +35,7 @@ public:
 
   bool home() {
     if (_home_pin < 0) {
+      Serial.println("ERROR: Homing pin value must be nonnegative.");
       return false;
     }
 
