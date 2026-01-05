@@ -45,9 +45,10 @@ void setup() {
 
 void loop() {
   //blink();
-  count();
+  //count();
   //testStepperButton();
   //testStepperButtonWithLeds();
+  testStepper();
 }
 
 void setLedHigh(){
@@ -81,8 +82,9 @@ void count(){
   unsigned long now = millis();
   static int day_count = 0;
   static int month_count = 0;
+  static int year_count = 0;
 
-  if (now - lastIncrement >= 500) {
+  if (now - lastIncrement >= 10) {
     lastIncrement = now;
 
     // Increment the day
@@ -90,7 +92,7 @@ void count(){
 
     if (day_count > DAYS_MAX)
     {
-      Serial.println("Incrementing Month LED count");
+      Serial.println("Max Days. Incrementing Month LED count");
       ++month_count;
       day_count = 0;
       led_effector->clearStrip();
@@ -98,19 +100,32 @@ void count(){
 
     if (month_count > MONTHS_MAX)
     {
-      Serial.println("Resetting All LED counts");
+      Serial.println("Max Months. Resetting All LED counts");
+      ++year_count;
       month_count = 0;
       day_count = 0;
       led_effector->clearStrip();
     }
 
-    Serial.print("Month count: ");
+    if (year_count > YEARS_MAX)
+    {
+      Serial.println("Max Years. Resetting all effectors.");
+      year_count = 0;
+      month_count = 0;
+      day_count = 0;
+      led_effector->clearStrip();
+    }
+
+    Serial.print("Year count: ");
+    Serial.print(year_count);
+    Serial.print(", Month count: ");
     Serial.print(month_count);
     Serial.print(", Day count: ");
     Serial.println(day_count);
 
     led_effector->displayDay(day_count);
     led_effector->displayMonth(month_count);
+    year_effector->displayYear(year_count);
   }
 }
 
@@ -183,5 +198,18 @@ void testStepperButtonWithLeds()
     Serial.println(day_count);
     led_effector->displayDay(day_count);
     led_effector->displayMonth(month_count);
+  }
+}
+
+void testStepper(){
+  static int year = 0;
+  year_effector->displayYear(year);
+
+  if(isStepperSwitchPressed())
+  {
+    ++year;
+    Serial.print("Incrementing year: ");
+    Serial.println(year);
+    year_effector->displayYear(year);
   }
 }
