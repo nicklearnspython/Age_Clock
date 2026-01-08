@@ -16,7 +16,7 @@ StepperEffector year_effector(STEPPER_STEPS_PER_REV, STEPPER_PIN_1, STEPPER_PIN_
 LedEffector led_effector(DAY_LED_COUNT, MONTH_LED_COUNT, YEAR_LED_COUNT);
 
 TinyGPSPlus gps;
-//SoftwareSerial ss(RXPin, TXPin);                    // The serial connection to the GPS device
+//SoftwareSerial ss(RX_PIN, TX_PIN);                    // The serial connection to the GPS device
 //SoftwareSerial dummy_ss(dummy_RXPin, dummy_TXPin);  // The serial connection to a dummy serial device. This prevents interrupts to servo control
 time_t prevDisplay = 0;
 
@@ -25,8 +25,8 @@ int input = 0;
 void setup(){
   Serial.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT);
-  //ss.begin(GPSBaud);
-  //dummy_ss.begin(GPSBaud);
+  //ss.begin(GPS_BAUD);
+  //dummy_ss.begin(GPS_BAUD);
 
   year_effector.begin(STEPPER_HOMING_PIN, HOMING_OFFSET_STEPS);
   if (!year_effector.home()) {

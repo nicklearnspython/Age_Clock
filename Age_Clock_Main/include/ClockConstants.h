@@ -72,9 +72,10 @@ static const uint8_t monthAngles[] = {0, 15, 30, 44, 58, 72, 85, 100, 117, 133, 
 static const uint8_t yearAngles[] = {0, 8, 18, 27, 37, 47, 57, 68, 80, 92, 104, 117, 130, 141, 154, 166, 179};
 
 /// ----------------------------- GPS CONSTANTS -------------------------------
-static const uint8_t RXPin = 4, TXPin = 3;
+static const int GPS_RX_PIN = 4;
+static const int GPS_TX_PIN = 3;
 static const uint8_t dummy_RXPin = 13, dummy_TXPin = 12;
-static const uint32_t GPSBaud = 9600;
+static const uint32_t GPS_BAUD = 9600;
 
 // Offset hours from gps time (UTC)
 static const int CST_offset = -6;  // Central Standard Time (USA)
