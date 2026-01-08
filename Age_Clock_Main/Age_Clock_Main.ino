@@ -5,16 +5,21 @@
 
 #include <Arduino.h>
 
+#include "include/GpsTimeSensor.h"
 #include "include/LedEffector.h"
 #include "include/StepperEffector.h"
 
+GpsTimeSensor * gps_time_sensor;
 LedEffector * led_effector;
 StepperEffector * year_effector;
 
 void setup() {
   // Starting Serial
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Welcome to the Age Clock. Starting Setup.");
+
+  // Setup the GPS Time Sensor
+  gps_time_sensor = new GpsTimeSensor;
 
   // Setup the LED Effector
   led_effector = new LedEffector();
@@ -48,7 +53,9 @@ void loop() {
   //count();
   //testStepperButton();
   //testStepperButtonWithLeds();
-  testStepper();
+  //testStepper();
+  //testGpsComms();
+  readRawGps();
 }
 
 void setLedHigh(){
@@ -212,4 +219,34 @@ void testStepper(){
     Serial.println(year);
     year_effector->displayYear(year);
   }
+}
+
+void testGpsComms()
+{
+  static int day_count = 0;
+  static int month_count = 0;
+  led_effector->displayDay(day_count);
+  led_effector->displayMonth(month_count);
+
+  if(gps_time_sensor->listen())
+  {
+    ++day_count;
+    if (day_count > DAYS_MAX)
+    {
+      ++month_count;
+      day_count = 0;
+      led_effector->clearStrip();
+    }
+    Serial.print("The month count is now: ");
+    Serial.println(month_count);
+    Serial.print("The day count is now: ");
+    Serial.println(day_count);
+    led_effector->displayDay(day_count);
+    led_effector->displayMonth(month_count);
+  }
+}
+
+void readRawGps()
+{
+  gps_time_sensor->listen();
 }
