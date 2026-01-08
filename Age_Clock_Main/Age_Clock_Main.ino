@@ -15,6 +15,8 @@ GpsTimeSensor * gps_time_sensor;
 LedEffector * led_effector;
 StepperEffector * year_effector;
 
+static const Date BIRTH_DATE(BIRTH_YEAR, BIRTH_MONTH, BIRTH_DAY);
+
 void setup() {
   // Starting Serial
   Serial.begin(115200);
@@ -51,14 +53,17 @@ void setup() {
 }
 
 void loop() {
-  //blink();
-  //count();
-  //testStepperButton();
-  //testStepperButtonWithLeds();
-  //testStepper();
-  //testGpsComms();
-  //readRawGps();
-  testAgeCalculation();
+  // Wait for the GPS to recieve and update
+  if (gps_time_sensor->listen())
+  {
+    Serial.println("listen is true??");
+    Date current_date = gps_time_sensor->getCurrentDate();
+    Age current_age = current_date - BIRTH_DATE;
+
+    year_effector->displayYear(current_age.getYear());
+    led_effector->displayMonth(current_age.getMonth());
+    led_effector->displayDay(current_age.getDay());
+  }
 }
 
 void setLedHigh(){
