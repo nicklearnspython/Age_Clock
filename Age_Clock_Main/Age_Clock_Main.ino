@@ -8,6 +8,8 @@
 #include "include/GpsTimeSensor.h"
 #include "include/LedEffector.h"
 #include "include/StepperEffector.h"
+#include "include/ClockAge.h"
+#include "include/ClockDate.h"
 
 GpsTimeSensor * gps_time_sensor;
 LedEffector * led_effector;
@@ -55,7 +57,8 @@ void loop() {
   //testStepperButtonWithLeds();
   //testStepper();
   //testGpsComms();
-  readRawGps();
+  //readRawGps();
+  testAgeCalculation();
 }
 
 void setLedHigh(){
@@ -249,4 +252,41 @@ void testGpsComms()
 void readRawGps()
 {
   gps_time_sensor->listen();
+}
+
+void testAgeCalculation()
+{
+  static unsigned long lastIncrement = 0;
+  unsigned long now = millis();
+  static int day_of_year = 0;
+
+  if (now - lastIncrement >= 500) { // 0.5 seconds
+    lastIncrement = now;
+
+    ++day_of_year; // Increment the day
+
+    Date birth(2016, 12, 30);
+    Date today(2026, day_of_year);
+
+    Age age = today - birth;
+
+    Serial.print("Birthday: ");
+    Serial.print(birth.getYear());
+    Serial.print("/");
+    Serial.print(birth.getMonth());
+    Serial.print("/");
+    Serial.print(birth.getDay());
+    Serial.print(" | Tomorrow: ");
+    Serial.print(today.getYear());
+    Serial.print("/");
+    Serial.print(today.getMonth());
+    Serial.print("/");
+    Serial.print(today.getDay());
+    Serial.print(" | Age: ");
+    Serial.print(age.getYear());
+    Serial.print("/");
+    Serial.print(age.getMonth());
+    Serial.print("/");
+    Serial.println(age.getDay());
+  }
 }
