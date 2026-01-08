@@ -125,3 +125,6 @@ private:
     return unitsPerRevolution == 0 ? 0 : stepsPerRevolution / unitsPerRevolution;
   }
 };
+
+// Stepper motor getting hot solution
+// https://forum.arduino.cc/t/stepper-28byj-48-is-hot-at-150f-is-this-normal/1205109/11
