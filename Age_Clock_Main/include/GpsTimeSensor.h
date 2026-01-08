@@ -5,6 +5,9 @@
 #include <TinyGPSPlus.h>
 
 #include "ClockConstants.h"
+#include "ClockDate.h"
+
+static constexpr bool is_testing = false;
 
 class GpsTimeSensor {
  public:
@@ -17,28 +20,60 @@ class GpsTimeSensor {
   bool listen() {
     // This sketch displays information every time a new sentence is correctly encoded.
     static long time_since_last_message = millis();
+
     while (ss.available() > 0)
     {
-      //char gps_data = ss.read();  // Read a byte of data
-      //Serial.write(gps_data);     // Write that byte to the hardware serial port (Serial Monitor)
-      if (gps.encode(ss.read()))
+      if (is_testing)
       {
-        displayInfo();
-        return true;
+        writeRawData();
+        return false;
       }
+
+      if (!gps.encode(ss.read()))
+      {
+        return false;
+      }
+
+      if (!gps.date.isUpdated() || !gps.date.isValid())
+      {
+        return false;
+      }
+
+      current_date = Date(gps.date.year(), gps.date.month(), gps.date.day());
+      if (!current_date.isValid())
+      {
+        return false;
+      }
+
+      valid_date = true;
+      displayInfo();
+      return true;
     }
 
-    //if (millis() - time_since_last_message > 5000 && gps.charsProcessed() < 10) {
-    //  Serial.println(F("ERROR: No GPS detected"));
-    //  //while (true);
-    //}
+    if (millis() - time_since_last_message > 5000 && gps.charsProcessed() < 10) {
+      Serial.println(F("ERROR: No GPS detected"));
+      // Reset timer
+      time_since_last_message = millis();
+    }
 
     return false;
   }
 
+const Date getCurrentDate()
+{
+  return current_date;
+}
+
+void writeRawData()
+{
+  Serial.write(ss.read());  // Write the raw data to the Serial Monitor
+}
+
  private:
   TinyGPSPlus gps;
   SoftwareSerial ss{GPS_RX_PIN, GPS_TX_PIN};
+  bool valid_date{false};
+  Date current_date{1900, 1, 1};
 
   void displayInfo() {
     Serial.print(F("Location: "));
@@ -51,7 +86,7 @@ class GpsTimeSensor {
     }
 
     Serial.print(F("  Date/Time: "));
-    if (gps.date.isUpdated()) {
+    if (gps.date.isValid()) {
       Serial.print(gps.date.month());
       Serial.print(F("/"));
       Serial.print(gps.date.day());

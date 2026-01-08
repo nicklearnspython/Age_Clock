@@ -43,6 +43,8 @@ class Date
     /// @brief Returns the day of the year
     uint16_t getDayOfYear() const {return day_of_year;}
 
+    bool isValid() const {return is_valid;}
+
     /// @brief Subtraction of two dates is an age
     /// @param other date
     /// @return Age
@@ -82,15 +84,29 @@ class Date
     uint16_t year;        ///< Year value
     uint8_t month;        ///< Month value [1-12]
     uint8_t day;          ///< Day value [1-31]
-    uint16_t day_of_year; /// The number of days since the start of the year
+    uint16_t day_of_year; ///< The number of days since the start of the year
+    bool is_valid;        ///< Validity check on construction
 };
 
 Date::Date(uint16_t year, uint8_t month, uint8_t day)
 : year(year),
   month(month),
-  day(day),
-  day_of_year(daysSinceYearStart(year, month, day))
-{}
+  day(day)
+{
+  if (
+    year < YEARS_MIN || year > YEARS_MAX ||
+    month < MONTHS_MIN|| month > MONTHS_MAX ||
+    day < DAYS_MIN || day > DAYS_MAX
+  )
+  {
+    is_valid = false;
+  }
+  else
+  {
+    day_of_year = daysSinceYearStart(year, month, day);
+    is_valid = true;
+  }
+}
 
 Date::Date(uint16_t year, uint16_t day_of_year)
 : year(year),
