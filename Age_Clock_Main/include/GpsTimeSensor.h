@@ -12,42 +12,28 @@ static constexpr bool is_testing = false;
 class GpsTimeSensor {
  public:
   GpsTimeSensor()
+  : ss{GPS_RX_PIN, GPS_TX_PIN},
+    valid_date{false},
+    is_updated{false},
+    current_date{1900, 1, 1}
   {
     ss.begin(GPS_BAUD);
-    ss.listen();
   }
 
-  bool listen() {
+  void listen() {
     // This sketch displays information every time a new sentence is correctly encoded.
     static long time_since_last_message = millis();
 
-    while (ss.available() > 0)
+    while (ss.available())
     {
-      if (is_testing)
-      {
-        writeRawData();
-        return false;
-      }
+      gps.encode(ss.read());
+    }
 
-      if (!gps.encode(ss.read()))
-      {
-        return false;
-      }
-
-      if (!gps.date.isUpdated() || !gps.date.isValid())
-      {
-        return false;
-      }
-
+    if (gps.date.isUpdated())
+    {
+      is_updated = true;
       current_date = Date(gps.date.year(), gps.date.month(), gps.date.day());
-      if (!current_date.isValid())
-      {
-        return false;
-      }
-
-      valid_date = true;
       displayInfo();
-      return true;
     }
 
     if (millis() - time_since_last_message > 5000 && gps.charsProcessed() < 10) {
@@ -55,9 +41,16 @@ class GpsTimeSensor {
       // Reset timer
       time_since_last_message = millis();
     }
-
-    return false;
   }
+
+  // Check if the date is object using the gps class
+  bool isValid() const {return gps.date.isValid();}
+
+  // Check if the date has been updated
+  bool isUpdated() const {return is_updated;}
+
+  // Reset the update flag. Expected to be used after isUpdated returns true
+  void resetUpdated() {is_updated = false;}
 
 const Date getCurrentDate()
 {
@@ -66,14 +59,18 @@ const Date getCurrentDate()
 
 void writeRawData()
 {
-  Serial.write(ss.read());  // Write the raw data to the Serial Monitor
+  while (ss.available() > 0){
+    byte gpsData = ss.read();
+    Serial.write(gpsData);  // Write the raw data to the Serial Monitor
+  }
 }
 
  private:
-  TinyGPSPlus gps;
-  SoftwareSerial ss{GPS_RX_PIN, GPS_TX_PIN};
-  bool valid_date{false};
-  Date current_date{1900, 1, 1};
+  TinyGPSPlus gps;    // GPS Object
+  SoftwareSerial ss;  // Serial Comms with the GPS object
+  bool valid_date;    // Is the current date valid
+  bool is_updated;    // Has the date been updated
+  Date current_date;  // Current Date
 
   void displayInfo() {
     Serial.print(F("Location: "));
@@ -97,7 +94,7 @@ void writeRawData()
     }
 
     Serial.print(F(" "));
-    if (gps.time.isUpdated()) {
+    if (gps.time.isValid()) {
       if (gps.time.hour() < 10) Serial.print(F("0"));
       Serial.print(gps.time.hour());
       Serial.print(F(":"));
