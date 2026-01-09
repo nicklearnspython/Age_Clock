@@ -1,7 +1,5 @@
-/*
- * Nick Garrett
- * The Age Clock
- */
+/// @file Age_Clock_Main.ino
+/// @brief Main Arduino sketch for the Age Clock.
 
 #include <Arduino.h>
 

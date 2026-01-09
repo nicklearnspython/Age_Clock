@@ -1,3 +1,6 @@
+/// @file GpsTimeSensor.h
+/// @brief GPS time sensor interface and helpers.
+
 #pragma once
 
 #include <SoftwareSerial.h>
@@ -52,18 +55,18 @@ class GpsTimeSensor {
   // Reset the update flag. Expected to be used after isUpdated returns true
   void resetUpdated() {is_updated = false;}
 
-const Date getCurrentDate()
-{
-  return current_date;
-}
-
-void printRawData()
-{
-  while (ss.available() > 0){
-    byte gpsData = ss.read();
-    Serial.write(gpsData);  // Write the raw data to the Serial Monitor
+  const Date getCurrentDate()
+  {
+    return current_date;
   }
-}
+
+  void printRawData()
+  {
+    while (ss.available() > 0){
+      byte gpsData = ss.read();
+      Serial.write(gpsData);  // Write the raw data to the Serial Monitor
+    }
+  }
 
  private:
   TinyGPSPlus gps;    // GPS Object

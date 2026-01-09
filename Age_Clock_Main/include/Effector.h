@@ -1,3 +1,6 @@
+/// @file Effector.h
+/// @brief Abstract interface for age display effectors.
+
 #pragma once
 
 /// Abstract interface for anything that can display age information.

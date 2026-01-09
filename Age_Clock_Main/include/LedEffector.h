@@ -1,3 +1,6 @@
+/// @file LedEffector.h
+/// @brief LED strip effector object to display days, months, or years.
+
 #pragma once
 
 #include <FastLED.h>

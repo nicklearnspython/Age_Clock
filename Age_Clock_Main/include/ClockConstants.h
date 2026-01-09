@@ -1,3 +1,6 @@
+/// @file ClockConstants.h
+/// @brief Project-wide hardware and configuration constants.
+
 #pragma once
 
 #include <FastLED.h>

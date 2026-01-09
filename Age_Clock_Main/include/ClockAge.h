@@ -1,6 +1,6 @@
-/// @file Age.h
-/// @author Nick Garrett (nicklearnspython@gmail.com)
-/// @brief Simple age date type which is a difference between two dates
+/// @file ClockAge.h
+/// @brief Simple age object which stores the age of someone in years, months,
+/// and days. Comparisons are available.
 
 #pragma once
 

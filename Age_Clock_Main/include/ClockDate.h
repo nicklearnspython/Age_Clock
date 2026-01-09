@@ -1,6 +1,6 @@
-/// @file Date.h
-/// @author Nick Garrett (nicklearnspython@gmail.com)
-/// @brief Simple immutable calendar date type (year, month, day).
+/// @file ClockDate.h
+/// @brief Immutable calendar date object (year, month, day). Uniquely, taking
+/// the difference between two dates produces an Age.
 
 #pragma once
 

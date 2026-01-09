@@ -1,3 +1,6 @@
+/// @file ClockServo.h
+/// @brief Servo wrapper used by the clock.
+
 #pragma once
 
 #include <Servo.h>
@@ -148,4 +151,3 @@ public:
     }
   }
 };
-

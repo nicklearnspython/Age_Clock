@@ -1,5 +1,4 @@
-/// @file DateUtils.h
-/// @author Nick Garrett (nicklearnspython@gmail.com)
+/// @file ClockUtils.h
 /// @brief Date-related constants and helper functions.
 
 #pragma once

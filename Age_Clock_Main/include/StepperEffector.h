@@ -1,3 +1,6 @@
+/// @file StepperEffector.h
+/// @brief Stepper motor effector object to display days, months, or years.
+
 #pragma once
 
 #include <Stepper.h>
