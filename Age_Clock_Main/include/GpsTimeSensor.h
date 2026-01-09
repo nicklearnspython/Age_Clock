@@ -57,7 +57,7 @@ const Date getCurrentDate()
   return current_date;
 }
 
-void writeRawData()
+void printRawData()
 {
   while (ss.available() > 0){
     byte gpsData = ss.read();

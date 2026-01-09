@@ -16,6 +16,7 @@ LedEffector * led_effector;
 StepperEffector * year_effector;
 
 static const Date BIRTH_DATE(BIRTH_YEAR, BIRTH_MONTH, BIRTH_DAY);
+static Age current_age;
 
 void setup() {
   // Starting Serial
@@ -53,16 +54,39 @@ void setup() {
 }
 
 void loop() {
-  // Wait for the GPS to recieve and update
-  if (gps_time_sensor->listen())
-  {
-    Serial.println("listen is true??");
-    Date current_date = gps_time_sensor->getCurrentDate();
-    Age current_age = current_date - BIRTH_DATE;
+  main_loop();
+}
 
-    year_effector->displayYear(current_age.getYear());
-    led_effector->displayMonth(current_age.getMonth());
-    led_effector->displayDay(current_age.getDay());
+void main_loop() {
+  // Listen for updates on the gps sensor
+  gps_time_sensor->listen();
+
+  // Wait for the GPS to recieve and update
+  if (gps_time_sensor->isUpdated())
+  {
+    gps_time_sensor->resetUpdated();
+
+    // get updated age with the current date
+    Date current_date = gps_time_sensor->getCurrentDate();
+    Age updated_age = current_date - BIRTH_DATE;
+
+    // If there is a new age, print it and display it!
+    if(current_age != updated_age)
+    {
+      Serial.print("Updated Age: ");
+      Serial.print(updated_age.getYear());
+      Serial.print("/");
+      Serial.print(updated_age.getMonth());
+      Serial.print("/");
+      Serial.println(updated_age.getDay());
+
+      year_effector->displayYear(updated_age.getYear());
+      led_effector->displayMonth(updated_age.getMonth());
+      led_effector->displayDay(updated_age.getDay());
+
+      // Don't forget to update the current age.
+      current_age = updated_age;
+    }
   }
 }
 
@@ -236,8 +260,12 @@ void testGpsComms()
   led_effector->displayDay(day_count);
   led_effector->displayMonth(month_count);
 
-  if(gps_time_sensor->listen())
+  gps_time_sensor->listen();
+
+  if(gps_time_sensor->isUpdated())
   {
+    gps_time_sensor->resetUpdated();
+
     ++day_count;
     if (day_count > DAYS_MAX)
     {
@@ -256,7 +284,7 @@ void testGpsComms()
 
 void readRawGps()
 {
-  gps_time_sensor->listen();
+  gps_time_sensor->printRawData();
 }
 
 void testAgeCalculation()
